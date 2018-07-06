@@ -1,0 +1,36 @@
+body{
+    background-color: cadetblue;
+    display: flex;
+    flex-direction: column;
+}
+
+h2{
+    text-align: center;
+    margin: 0;
+    padding: 0;
+    background-color: rgba(86, 121, 187, 0.342);
+}
+
+h3{
+    text-align: end;
+    margin: 0;
+    background-color: rgb(69, 200, 223);
+}
+
+.height{
+    height: 88vh;
+}
+
+.grid-display-section{
+    display: grid;
+    grid-template-columns: 30% 69%;
+    grid-column-gap: 1vw;
+}
+
+.body-grid-1{
+    background-color: lightblue;
+}
+
+.body-grid-2{
+    background-color: rgb(120, 173, 190);
+}
