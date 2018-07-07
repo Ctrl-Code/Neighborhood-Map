@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" type="text/css" media="screen" href="css/project.css">
     <script type='text/javascript' src='js/lib/knockout-3.4.2.js'></script>
+    <script type="text/javascript" src="js/googleMap.js"></script>
 </head>
 <body>
     <h2>
@@ -16,11 +17,15 @@
             Here Search Panel and Cities Will be provided. 
         </div>
         <div class="body-grid-2 height">
-            Here Google Map Will be Loaded.
+            <div id="map"></div>
         </div>
     </div>
     <h3>
         Made By Ctrl-Code
     </h3>
+    <script
+        async defer
+        src="http://maps.googleapis.com/maps/api/js?key=AIzaSyBZrZSLATHBFHVeMZsTb3Nd28YbhgLezpc&v=3&callback=initMap">
+    </script>
 </body>
 </html>

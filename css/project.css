@@ -17,8 +17,12 @@ h3{
     background-color: rgb(69, 200, 223);
 }
 
-.height{
-    height: 88vh;
+#map{
+    height: 100%;
+}
+
+.body-grid-1{
+    background-color: lightblue;
 }
 
 .grid-display-section{
@@ -27,10 +31,6 @@ h3{
     grid-column-gap: 1vw;
 }
 
-.body-grid-1{
-    background-color: lightblue;
-}
-
-.body-grid-2{
-    background-color: rgb(120, 173, 190);
+.height{
+    height: 88vh;
 }
