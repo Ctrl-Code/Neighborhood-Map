@@ -17,6 +17,11 @@ h3{
     background-color: rgb(69, 200, 223);
 }
 
+#inputBox{
+    width: 98%;
+    background-color: rgb(151, 191, 218);
+}
+
 #map{
     height: 100%;
 }

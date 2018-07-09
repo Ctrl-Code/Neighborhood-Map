@@ -1,4 +1,41 @@
+//=========================================================================//
+//  BELOW GIVEN CONTENT OF THIS JAVASCRIPT CORRESPONDS TO THE KNOCKOUT JS  //
+//=========================================================================//
+function AppViewModel(){
+    // VARIABLE DECLARATIONS
+    var self = this;
+    self.cities = ko.observableArray([
+        "Dehra Dun", "Mumbai",
+        "Durg", "Jhajjar",
+        "Vizag", "Pinjore",
+        "Lucknow", "Betul",
+        "Ludhiana", "Chennai"]);
+    self.displayingCities = ko.observableArray([]);
+    self.searchAnswer = ko.observable("");
+    self.message = ko.observable(null);
+
+    //  FUNCTIONS AND THEIR DEFINATIONS
+    ko.computed(function(){   
+        self.displayingCities([]);
+        var len = self.cities().length;
+        for(var i = 0; i < len; ++i){
+            var index = self.cities()[i].indexOf(self.searchAnswer());
+            if (index != -1){
+                self.displayingCities.push(self.cities()[i]);
+            };
+        };
+    });
+};
+
+ko.applyBindings(new AppViewModel());
+
+
+
+//=============================================================================//
+//  BELOW GIVEN CONTENT OF THIS JAVASCRIPT CORRESPONDS TO THE GOOGLE MAPS API  //
+//=============================================================================//
 var map;
+
 function initMap(){
     map = new google.maps.Map(document.getElementById('map'), {
         center: {lat: 23.8374857 , lng: 78.7486267 },
@@ -37,7 +74,7 @@ function initMap(){
             map: map,
             position:position,
             title: title,
-            animation: google.maps.Animation.BOUNCE,
+            animation: google.maps.Animation.DROP,
             id: i,
         });
 
