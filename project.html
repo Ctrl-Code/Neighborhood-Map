@@ -12,8 +12,8 @@
     </h2>
     <div class="grid-display-section">
         <div class="body-grid-1 height">
-            <br><input id="inputBox" placeholder="Search for the City Here" data-bind="textInput: searchAnswer"><br>
-            <ul data-bind="foreach: DisplayingCities">
+            <br><input id="inputBox" placeholder="Search for the City Here" data-bind="textInput: searchString"><br>
+            <ul data-bind="foreach: displayingCities">
                 <li><span data-bind="text: $data"></span></li>
             </ul>
         </div>

@@ -1,4 +1,34 @@
+function AppViewModel(){
+    var self = this;
+    self.DisplayingCities = ko.observableArray([]);
+    self.searchAnswer = ko.observable("");
+
+    ko.computed(function()
+    {
+        if(self.searchAnswer() != '')
+        {
+            self.DisplayingCities(["The", "List", "Items", "Are", "Changing"]);
+        }
+        else
+        {
+            self.DisplayingCities(["Dehra Dun", "Mumbai",
+            "Durg", "Jhajjar",
+            "Vizag", "Pinjore",
+            "Lucknow", "Betul",
+            "Ludhiana", "Chennai"]);
+        }; 
+    });
+};
+
+ko.applyBindings(new AppViewModel());
+
+//=============================================================================//
+//  BELOW GIVEN CONTENT OF THIS JAVASCRIPT CORRESPONDS TO THE GOOGLE MAPS API  //
+//=============================================================================//
+
+
 var map;
+
 function initMap(){
     map = new google.maps.Map(document.getElementById('map'), {
         center: {lat: 23.8374857 , lng: 78.7486267 },
@@ -37,7 +67,7 @@ function initMap(){
             map: map,
             position:position,
             title: title,
-            animation: google.maps.Animation.BOUNCE,
+            animation: google.maps.Animation.DROP,
             id: i,
         });
 
