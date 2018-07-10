@@ -1,6 +1,3 @@
-//=========================================================================//
-//  BELOW GIVEN CONTENT OF THIS JAVASCRIPT CORRESPONDS TO THE KNOCKOUT JS  //
-//=========================================================================//
 var map;
 var markers = [];
 var message = ko.observable(null);
@@ -26,18 +23,6 @@ var locations = [
     { title: 'Sugandh from Chennai', location: {lat: 13.0475255, lng: 80.2090117}},
 ];
 
-
-function AppViewModel(){
-    ko.computed(function(){
-        // Calculating Index of cities from 'cities' that match the
-        //      'SearchString' and then storing it in array 'displayCitiesIndex'.
-        calculateIndexes();
-        //  This will match the corresponding indexes of 'displayCitiesIndex' and
-        //      store the cities to be displayed on the screen in array 'displayCities'
-        renderCities();
-    });
-};
-
 function initMap(){
     map = new google.maps.Map(document.getElementById('map'), {
         center: {lat: 23.8374857 , lng: 78.7486267 },
@@ -45,35 +30,38 @@ function initMap(){
     });
 
     var largeInfoWindow = new google.maps.InfoWindow();
-    
+
     // For the viewports
     var bounds = new google.maps.LatLngBounds();
 
-    // Create a new blank array for all the markers for friends.
-
-    for (var i = 0; i< locations.length; i++){
-        // Get the position from the location array.
-        var position = locations[i].location;
-        var title = locations[i].title;
-        var marker = new google.maps.Marker({
-            map: map,
-            position:position,
-            title: title,
-            animation: google.maps.Animation.DROP,
-            id: i,
-        });
-
-        // Push the marker to our array of markers.
-        markers.push(marker);
-        // Extend the boundaries of the map for each marker
-        bounds.extend(marker.position);
-        // Create an onclick event to open an indowindow at each marker.
-        marker.addListener('click', function(){
-            populateInfoWindow(this, largeInfoWindow);
-        });
-    }
-
     map.fitBounds(bounds)
+
+    ko.computed(function(){
+        deleteMarkers();    
+        var len = displayingCitiesIndex().length;
+        for (var i = 0; i< len; i++){
+            // Get the position from the location array.
+            var position = locations[displayingCitiesIndex()[i]].location;
+            var title = locations[displayingCitiesIndex()[i]].title;
+            var marker = new google.maps.Marker({
+                map: map,
+                position:position,
+                title: title,
+                animation: google.maps.Animation.BOUNCE,
+                id: i,
+            });
+            // Push the marker to our array of markers.
+            markers.push(marker);
+            
+            // Extend the boundaries of the map for each marker
+            bounds.extend(marker.position);
+            
+            // Create an onclick event to open an indowindow at each marker.
+            marker.addListener('click', function(){
+                populateInfoWindow(this, largeInfoWindow);
+            });
+        };
+    });
 
     // This function populates the infowindow when the marker is clicked, We'll only
     // allow one infowindow which will open at the marker that is clicked, and populate based
@@ -83,31 +71,59 @@ function initMap(){
             infowindow.marker = marker;
             infowindow.setContent('<div>' + marker.title + '</div>');
             infowindow.open(map, marker);
+            
             // making sure that the marker property is cleared if the indowindow is closed.
             infowindow.addListener('closeclick', function(){
                 infowindow.setMarker(null);
             });
         }
     }
-}
-
-function calculateIndexes(){
-    displayingCitiesIndex([]);
-    var len = cities().length;
-    for(var i = 0; i < len; ++i){
-        var index = cities()[i].indexOf(searchString());
-        if (index != -1){
-            displayingCitiesIndex.push(i);
+    
+    //  Below given set of 3 functions corresponds to the deletion of markers.
+    //      i.e. setMapOnAll(), clearMarkers(), deleteMarkers() below.
+    function setMapOnAll(map) {
+        for (var i = 0; i < markers.length; i++) {
+          markers[i].setMap(map);
         }
+    }
+    function clearMarkers() {
+        setMapOnAll(null);
+    }
+    function deleteMarkers() {
+        clearMarkers();
+        markers = [];
     }
 };
 
-function renderCities(){
-    displayingCities([]);
-    var len = displayingCitiesIndex().length;
-    for(var i=0; i<len; ++i){
-        displayingCities.push(cities()[displayingCitiesIndex()[i]]);
-    }
+function AppViewModel(){
+    ko.computed(function(){
+        // Calculating Index of cities from 'cities' that match the
+        //      'SearchString' and then storing it in array 'displayCitiesIndex'.
+        calculateIndexes();
+        //  This will match the corresponding indexes of 'displayCitiesIndex' and
+        //      store the cities to be displayed on the screen in array 'displayCities'
+        renderCities();
+        //  Render the changes in the map.
+    });
+
+    function calculateIndexes(){
+        displayingCitiesIndex([]);
+        var len = cities().length;
+        for(var i = 0; i < len; ++i){
+            var index = cities()[i].indexOf(searchString());
+            if (index != -1){
+                displayingCitiesIndex.push(i);
+            }
+        }
+    };
+    
+    function renderCities(){
+        displayingCities([]);
+        var len = displayingCitiesIndex().length;
+        for(var i=0; i<len; ++i){
+            displayingCities.push(cities()[displayingCitiesIndex()[i]]);
+        }
+    };
 };
 
 ko.applyBindings(new AppViewModel());
