@@ -22,6 +22,9 @@ var locations = [
     { title: 'Rumeet from Ludhiana', location: {lat: 30.9003452, lng: 75.8566733}},
     { title: 'Sugandh from Chennai', location: {lat: 13.0475255, lng: 80.2090117}},
 ];
+//  For FourSquare API
+var clientId = "NWMFFCOGYW3RKGYERVDHSLBSSM2A51XPIAYBFZYUGNG3YDJR";
+var clientSecret = "IN30A4WARYNLIVGAHBATFWVGXOIP3ITG2Y3WWCR1PHSAVFDQ";
 
 function initMap(){
     map = new google.maps.Map(document.getElementById('map'), {
@@ -52,32 +55,73 @@ function initMap(){
             });
             // Push the marker to our array of markers.
             markers.push(marker);
-            
             // Extend the boundaries of the map for each marker
             bounds.extend(marker.position);
-            
             // Create an onclick event to open an indowindow at each marker.
             marker.addListener('click', function(){
+                console.log("SCOPE = 1");
                 populateInfoWindow(this, largeInfoWindow);
             });
         };
     });
-
+var nearbyPlacesData = "";
     // This function populates the infowindow when the marker is clicked, We'll only
     // allow one infowindow which will open at the marker that is clicked, and populate based
     // on that markers position.
     function populateInfoWindow(marker, infowindow){
+        console.log("SCOPE = 2");
         if (infowindow.marker != marker){
+            console.log("SCOPE = 3");
+            getNearbyPlaces(marker.position);
+            console.log("SCOPE = 4");
             infowindow.marker = marker;
-            infowindow.setContent('<div>' + marker.title + '</div>');
+            infowindow.setContent('<div>' + marker.title + '<br>' + nearbyPlacesData + '</div>');
             infowindow.open(map, marker);
-            
-            // making sure that the marker property is cleared if the indowindow is closed.
-            infowindow.addListener('closeclick', function(){
-                infowindow.setMarker(null);
-            });
+            console.log("SCOPE = X");
         }
-    }
+    };
+
+    function getNearbyPlaces(str){
+        console.log("SCOPE = 3.1");
+        str = trimBracketsFromPosition(str);
+        console.log("SCOPE = 3.2");
+        run4SquareAPI(str);
+    };
+
+    function trimBracketsFromPosition(str){
+        str = "" + str + "";
+        str = str.substr(1);
+        str = str.substr(0,str.length-1);
+        console.log("SCOPE = 3.1.1/1");
+        return str;
+    };
+
+    function run4SquareAPI(latAndLon){
+        console.log("SCOPE = 3.2.1/5");
+        var xhttp = new XMLHttpRequest();
+        xhttp.onreadystatechange = function(){
+            if (this.readyState == 4 && this.status == 200){
+                console.log("SCOPE = 3.2.4/5");
+                ans = JSON.parse(this.responseText);
+                nearbyPlacesData = "";
+                answerString = "";
+                answerString += "<strong>Nearby Places are</strong><br>" + ans.response.venues[0].name;
+                answerString += "<br>" + ans.response.venues[0].location.distance + "metres";
+                answerString += "<br>" + ans.response.venues[1].name;
+                answerString += "<br>" + ans.response.venues[1].location.distance + "metres";
+                console.log(answerString);
+                console.log("SCOPE = 3.2.5/5");
+                nearbyPlacesData += answerString;
+                }
+            };
+        console.log("SCOPE = 3.2.2/5");
+        var link = "https://api.foursquare.com/v2/venues/search?ll=" + latAndLon + "&client_id=" + clientId + "&client_secret=" + clientSecret + "&v=20180710";
+        xhttp.open("GET", link,false);
+        xhttp.send();
+        console.log("SCOPE = 3.2/2.3/5");
+    };
+
+
     
     //  Below given set of 3 functions corresponds to the deletion of markers.
     //      i.e. setMapOnAll(), clearMarkers(), deleteMarkers() below.
