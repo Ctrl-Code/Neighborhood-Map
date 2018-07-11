@@ -33,6 +33,7 @@ var clientSecret = "IN30A4WARYNLIVGAHBATFWVGXOIP3ITG2Y3WWCR1PHSAVFDQ";
 //  Asynchronous call made by 'Google Maps API'.
 function initMap(){
     var nearbyPlacesData = "";
+    var lastId = -1;
     map = new google.maps.Map(document.getElementById('map'), {
         center: {lat: 23.8374857 , lng: 78.7486267 },
         zoom: 5
@@ -57,7 +58,7 @@ function initMap(){
                 map: map,
                 position:position,
                 title: title,
-                animation: google.maps.Animation.BOUNCE,
+                animation: google.maps.Animation.DROP,
                 id: i,
             });
             
@@ -67,36 +68,63 @@ function initMap(){
             // Extend the boundaries of the map for each marker
             bounds.extend(marker.position);
             
-            // Create an onclick event to open an indowindow at each marker.
+            // Create an onclick event to open an infoWindow at each marker.
             marker.addListener('click', function(){
-                console.log("SCOPE = 1");
                 populateInfoWindow(this, largeInfoWindow);
             });
         };
     });
+
+    
+    // Create an onclick event to open an infoWindow at each displayed city on the map
+    mapDataShow = function (name){
+        len = cities().length;
+        for(var i=0; i<len; ++i){
+            if(cities()[i] == name){
+                var coordinates = locations[i].location.lat + "," + locations[i].location.lng;
+                
+                //  For getting information regarding new Places at particular location
+                run4SquareAPI(coordinates);
+
+                var contentString = '<div><h4>' + cities()[i] + '</h4><br>' + nearbyPlacesData + '</div>';
+                var infowindow = new google.maps.InfoWindow({
+                    content: contentString,
+                    position: locations[i].location
+                  });
+                infowindow.open(map);
+                setTimeout(function(){infowindow.close()},5000);
+            }
+        }
+    };
 
 
     // This function populates the infowindow when the marker is clicked, We'll only
     // allow one infowindow which will open at the marker that is clicked, and populate based
     // on that markers position.
     function populateInfoWindow(marker, infowindow){
-        console.log("SCOPE = 2");
         if (infowindow.marker != marker){
-            console.log("SCOPE = 3");
             getNearbyPlaces(marker.position);
-            console.log("SCOPE = 4");
             infowindow.marker = marker;
             infowindow.setContent('<div>' + marker.title + '<br>' + nearbyPlacesData + '</div>');
+            if(lastId > -1){
+                markers[lastId].setAnimation(null);
+                marker.setAnimation(google.maps.Animation.BOUNCE);
+                lastId = marker.id;
+            }
+            else{
+                marker.setAnimation(google.maps.Animation.BOUNCE);
+                lastId = marker.id;
+            }
             infowindow.open(map, marker);
-            console.log("SCOPE = X");
+            setTimeout(function(){infowindow.close()},8000);
+            setTimeout(function(){marker.setAnimation(null)},8000);
+            });
         }
     };
 
 
     function getNearbyPlaces(str){
-        console.log("SCOPE = 3.1");
         str = trimBracketsFromPosition(str);
-        console.log("SCOPE = 3.2");
         run4SquareAPI(str);
     };
 
@@ -107,7 +135,6 @@ function initMap(){
         str = "" + str + "";
         str = str.substr(1);
         str = str.substr(0,str.length-1);
-        console.log("SCOPE = 3.1.1/1");
         return str;
     };
 
@@ -116,11 +143,9 @@ function initMap(){
     //      and handling the response along with the error handling which is done
     //      automatically with the code in 'onreadyState' function.
     function run4SquareAPI(latAndLon){
-        console.log("SCOPE = 3.2.1/5");
         var xhttp = new XMLHttpRequest();
         xhttp.onreadystatechange = function(){
             if (this.readyState == 4 && this.status == 200){
-                console.log("SCOPE = 3.2.4/5");
                 ans = JSON.parse(this.responseText);
                 nearbyPlacesData = "";
                 // This answerString would be added to the infoWindow and thus is added with HTML
@@ -129,17 +154,13 @@ function initMap(){
                 answerString += "<br>" + ans.response.venues[0].location.distance + "metres";
                 answerString += "<br>" + ans.response.venues[1].name;
                 answerString += "<br>" + ans.response.venues[1].location.distance + "metres";
-                console.log(answerString);
-                console.log("SCOPE = 3.2.5/5");
                 nearbyPlacesData += answerString;
                 }
             };
-        console.log("SCOPE = 3.2.2/5");
         var link = "https://api.foursquare.com/v2/venues/search?ll=" + latAndLon +
             "&client_id=" + clientId + "&client_secret=" + clientSecret + "&v=20180710";
         xhttp.open("GET", link,false);
         xhttp.send();
-        console.log("SCOPE = 3.2/2.3/5");
     };
 
 
@@ -191,7 +212,7 @@ function AppViewModel(){
         displayingCities([]);
         var len = displayingCitiesIndex().length;
         for(var i=0; i<len; ++i){
-            displayingCities.push(cities()[displayingCitiesIndex()[i]]);
+            displayingCities.push(cities()[displayingCitiesIndex()[i]]);        
         }
     };
 };
