@@ -1,8 +1,13 @@
+/* The 'CSS' file here follow the strict order of 
+alphabetical presentation for html elements, ids and classes
+respectively */
+
 body{
     background-color: cadetblue;
     display: flex;
     flex-direction: column;
 }
+
 
 h2{
     text-align: center;
@@ -10,6 +15,7 @@ h2{
     padding: 0;
     background-color: rgba(86, 121, 187, 0.342);
 }
+
 
 h3{
     text-align: end;
@@ -22,19 +28,23 @@ h3{
     background-color: rgb(151, 191, 218);
 }
 
+
 #map{
     height: 100%;
 }
 
+
 .body-grid-1{
     background-color: lightblue;
 }
+
 
 .grid-display-section{
     display: grid;
     grid-template-columns: 30% 69%;
     grid-column-gap: 1vw;
 }
+
 
 .height{
     height: 88vh;

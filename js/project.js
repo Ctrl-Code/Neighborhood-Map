@@ -10,6 +10,8 @@ var cities = ko.observableArray([
     "Vizag", "Pinjore",
     "Lucknow", "Betul",
     "Ludhiana", "Chennai"]);
+
+//  Locations of friends specified with lattitude and longitude.
 var locations = [
     { title: 'Nikhil from DehraDun', location: {lat: 30.3254285, lng: 78.0171347}},
     { title: 'Giridhar from Mumbai', location: {lat: 18.9891478, lng: 73.0441442}},
@@ -22,27 +24,32 @@ var locations = [
     { title: 'Rumeet from Ludhiana', location: {lat: 30.9003452, lng: 75.8566733}},
     { title: 'Sugandh from Chennai', location: {lat: 13.0475255, lng: 80.2090117}},
 ];
+
 //  For FourSquare API
 var clientId = "NWMFFCOGYW3RKGYERVDHSLBSSM2A51XPIAYBFZYUGNG3YDJR";
 var clientSecret = "IN30A4WARYNLIVGAHBATFWVGXOIP3ITG2Y3WWCR1PHSAVFDQ";
 
+
+//  Asynchronous call made by 'Google Maps API'.
 function initMap(){
+    var nearbyPlacesData = "";
     map = new google.maps.Map(document.getElementById('map'), {
         center: {lat: 23.8374857 , lng: 78.7486267 },
         zoom: 5
     });
 
+
     var largeInfoWindow = new google.maps.InfoWindow();
 
     // For the viewports
     var bounds = new google.maps.LatLngBounds();
-
     map.fitBounds(bounds)
 
     ko.computed(function(){
         deleteMarkers();    
         var len = displayingCitiesIndex().length;
         for (var i = 0; i< len; i++){
+            
             // Get the position from the location array.
             var position = locations[displayingCitiesIndex()[i]].location;
             var title = locations[displayingCitiesIndex()[i]].title;
@@ -53,10 +60,13 @@ function initMap(){
                 animation: google.maps.Animation.BOUNCE,
                 id: i,
             });
+            
             // Push the marker to our array of markers.
             markers.push(marker);
+            
             // Extend the boundaries of the map for each marker
             bounds.extend(marker.position);
+            
             // Create an onclick event to open an indowindow at each marker.
             marker.addListener('click', function(){
                 console.log("SCOPE = 1");
@@ -64,7 +74,8 @@ function initMap(){
             });
         };
     });
-var nearbyPlacesData = "";
+
+
     // This function populates the infowindow when the marker is clicked, We'll only
     // allow one infowindow which will open at the marker that is clicked, and populate based
     // on that markers position.
@@ -81,6 +92,7 @@ var nearbyPlacesData = "";
         }
     };
 
+
     function getNearbyPlaces(str){
         console.log("SCOPE = 3.1");
         str = trimBracketsFromPosition(str);
@@ -88,6 +100,9 @@ var nearbyPlacesData = "";
         run4SquareAPI(str);
     };
 
+
+    //  This function trims the brackets for the lattitude and longitude recieved which
+    //      are of the form `(a, b)` making them `a,b`.
     function trimBracketsFromPosition(str){
         str = "" + str + "";
         str = str.substr(1);
@@ -96,6 +111,10 @@ var nearbyPlacesData = "";
         return str;
     };
 
+
+    // This function requests the use of 'FourSquares' API. Sending requests
+    //      and handling the response along with the error handling which is done
+    //      automatically with the code in 'onreadyState' function.
     function run4SquareAPI(latAndLon){
         console.log("SCOPE = 3.2.1/5");
         var xhttp = new XMLHttpRequest();
@@ -104,6 +123,7 @@ var nearbyPlacesData = "";
                 console.log("SCOPE = 3.2.4/5");
                 ans = JSON.parse(this.responseText);
                 nearbyPlacesData = "";
+                // This answerString would be added to the infoWindow and thus is added with HTML
                 answerString = "";
                 answerString += "<strong>Nearby Places are</strong><br>" + ans.response.venues[0].name;
                 answerString += "<br>" + ans.response.venues[0].location.distance + "metres";
@@ -115,14 +135,14 @@ var nearbyPlacesData = "";
                 }
             };
         console.log("SCOPE = 3.2.2/5");
-        var link = "https://api.foursquare.com/v2/venues/search?ll=" + latAndLon + "&client_id=" + clientId + "&client_secret=" + clientSecret + "&v=20180710";
+        var link = "https://api.foursquare.com/v2/venues/search?ll=" + latAndLon +
+            "&client_id=" + clientId + "&client_secret=" + clientSecret + "&v=20180710";
         xhttp.open("GET", link,false);
         xhttp.send();
         console.log("SCOPE = 3.2/2.3/5");
     };
 
 
-    
     //  Below given set of 3 functions corresponds to the deletion of markers.
     //      i.e. setMapOnAll(), clearMarkers(), deleteMarkers() below.
     function setMapOnAll(map) {
@@ -130,9 +150,13 @@ var nearbyPlacesData = "";
           markers[i].setMap(map);
         }
     }
+
+
     function clearMarkers() {
         setMapOnAll(null);
     }
+
+
     function deleteMarkers() {
         clearMarkers();
         markers = [];
@@ -144,11 +168,12 @@ function AppViewModel(){
         // Calculating Index of cities from 'cities' that match the
         //      'SearchString' and then storing it in array 'displayCitiesIndex'.
         calculateIndexes();
+        
         //  This will match the corresponding indexes of 'displayCitiesIndex' and
         //      store the cities to be displayed on the screen in array 'displayCities'
         renderCities();
-        //  Render the changes in the map.
     });
+
 
     function calculateIndexes(){
         displayingCitiesIndex([]);
@@ -160,6 +185,7 @@ function AppViewModel(){
             }
         }
     };
+
     
     function renderCities(){
         displayingCities([]);
@@ -169,5 +195,6 @@ function AppViewModel(){
         }
     };
 };
+
 
 ko.applyBindings(new AppViewModel());
