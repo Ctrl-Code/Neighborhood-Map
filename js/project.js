@@ -38,8 +38,6 @@ function initMap(){
         center: {lat: 23.8374857 , lng: 78.7486267 },
         zoom: 5
     });
-
-
     var largeInfoWindow = new google.maps.InfoWindow();
 
     // For the viewports
@@ -86,7 +84,7 @@ function initMap(){
                 //  For getting information regarding new Places at particular location
                 run4SquareAPI(coordinates);
 
-                var contentString = '<div><h4>' + cities()[i] + '</h4><br>' + nearbyPlacesData + '</div>';
+                var contentString = '<div><strong>' + cities()[i] + '</strong><br>' + nearbyPlacesData + '</div>';
                 var infowindow = new google.maps.InfoWindow({
                     content: contentString,
                     position: locations[i].location
@@ -118,8 +116,7 @@ function initMap(){
             infowindow.open(map, marker);
             setTimeout(function(){infowindow.close()},8000);
             setTimeout(function(){marker.setAnimation(null)},8000);
-            });
-        }
+        };
     };
 
 
@@ -159,8 +156,19 @@ function initMap(){
             };
         var link = "https://api.foursquare.com/v2/venues/search?ll=" + latAndLon +
             "&client_id=" + clientId + "&client_secret=" + clientSecret + "&v=20180710";
-        xhttp.open("GET", link,false);
-        xhttp.send();
+        
+        //  Below given 'jqxhr' is Jquery Object for handling errors in the FourSquare API
+        var jqxhr = $.ajax(link)
+            .done(function() {
+              xhttp.open("GET", link, false);
+              xhttp.send();
+            })
+            
+            .fail(function() {
+                var textMessage = "An error occured while loading the FourSquare API\n";
+                textMessage += "Try reloading.";
+                alert(textMessage);
+            });
     };
 
 
@@ -183,6 +191,13 @@ function initMap(){
         markers = [];
     }
 };
+
+
+// Error handling incase the google API is offline.
+window.googleError = function(){
+    alert("An error occured while loading Google Maps\nPleas try reloading.")
+};
+
 
 function AppViewModel(){
     ko.computed(function(){

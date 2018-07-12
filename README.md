@@ -8,7 +8,7 @@ Here we have created a simple web page that lists the name of friends which have
 
 >## LEARNING OUTCOMES
 
-Here we started with the development of the webpage using `HTML 5` and `CSS`. Then we used `Google Maps API` for rendering the map and also the `FourSquare API` for getting additional information which is basically about the 2 near points with the distance as well shown with the info. The use of these API is made possible with `Javascript`. The project could have been made with simple javascript as well but we adhered to the use of `Knockout JS` of MVVM paradigm. Also Made use of a few `AJAX` methods and `JSON` with the javascript.
+Here we started with the development of the webpage using `HTML 5` and `CSS`. Then we used `Google Maps API` for rendering the map and also the `FourSquare API` for getting additional information which is basically about the 2 near points with the distance as well shown with the info. The use of these API is made possible with `Javascript`. The project could have been made with simple javascript as well but we adhered to the use of `Knockout JS` of MVVM paradigm. Also Made use of a few `AJAX` methods and `JSON` with the javascript. To handle the errors regarding the 'FourSquare API' we used `JQUERY` a little.
 
 ***
 
